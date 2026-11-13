@@ -83,11 +83,11 @@ The offline test runner (`tests/test_suite.py`) executed all 22 required functio
 
 | Test Code | Architecture Audit Target | Expected Result | Actual Result | Verification Status |
 | :---: | :--- | :--- | :--- | :---: |
-| **TC-FS-1** | Project File Structure | All 25 required files and folders present in workspace. | All 25 files verified present. | **PASS** |
+| **TC-FS-1** | Project File Structure | All 30 architecture and bridge files present in workspace. | All 30 files verified present. | **PASS** |
 | **TC-DB-1** | Database Schema Definition | `database.sql` includes `taskflow_db`, `users`, `tasks`, FK, indexes. | Database creation, tables, FK with CASCADE, and indexes confirmed. | **PASS** |
 | **TC-DB-2** | Seed Data Password Hash | Pre-seeded sample accounts verify against `Password123!`. | Cryptographic BCRYPT check succeeded. | **PASS** |
 | **TC-DB-3** | Referential Integrity (CASCADE) | Deleting user record cascade-deletes all associated tasks. | 0 orphan tasks remained after user deletion. | **PASS** |
-| **TC-SYN-1** | PHP State-Machine Syntax Audit | All 15 PHP files evaluated for balanced delimiters and syntax. | 15 of 15 PHP files passed structural syntax analysis. | **PASS** |
+| **TC-SYN-1** | PHP State-Machine Syntax Audit | All 20 PHP files evaluated for balanced delimiters and syntax. | 20 of 20 PHP files passed structural syntax analysis. | **PASS** |
 
 ---
 

@@ -287,7 +287,9 @@ require_once __DIR__ . '/../includes/header.php';
 
                             <!-- Task Title -->
                             <td>
-                                <div class="fw-bold text-dark"><?= e($task['title']); ?></div>
+                                <a href="<?= e(base_url('tasks/view.php?id=' . (int)$task['id'])); ?>" class="fw-bold text-dark text-decoration-none">
+                                    <?= e($task['title']); ?>
+                                </a>
                             </td>
 
                             <!-- Description -->
@@ -323,6 +325,14 @@ require_once __DIR__ . '/../includes/header.php';
                             <!-- Action Buttons -->
                             <td class="text-end text-nowrap">
                                 <div class="btn-group btn-group-sm" role="group">
+                                    <!-- View Details Button -->
+                                    <a href="<?= e(base_url('tasks/view.php?id=' . (int)$task['id'])); ?>" 
+                                       class="btn btn-outline-secondary" 
+                                       data-bs-toggle="tooltip" 
+                                       title="View Task Details">
+                                        <i class="bi bi-eye text-info"></i>
+                                    </a>
+
                                     <!-- Edit Button -->
                                     <a href="<?= e(base_url('tasks/edit.php?id=' . (int)$task['id'])); ?>" 
                                        class="btn btn-outline-secondary" 

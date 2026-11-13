@@ -88,6 +88,12 @@ TaskFlow addresses these challenges by delivering an intuitive, responsive task 
 ```
 taskflow/
 │
+├── index.php                    # Application landing page & smart router
+├── dashboard.php                # Root shortcut/redirect to tasks/index.php
+├── login.php                    # Root shortcut/redirect to auth/login.php
+├── register.php                 # Root shortcut/redirect to auth/register.php
+├── logout.php                   # Root shortcut/redirect to auth/logout.php
+│
 ├── assets/
 │   ├── css/
 │   │   └── style.css            # Custom responsive styling and theme variables
@@ -102,7 +108,7 @@ taskflow/
 ├── includes/
 │   ├── auth.php                 # Authentication guards & session management
 │   ├── csrf.php                 # Cryptographic CSRF token generation & validation
-│   ├── functions.php            # Sanitization, XSS escaping, badges, base_url
+│   ├── functions.php            # Sanitization, XSS escaping, badges, base_url, open-redirect defense
 │   ├── header.php               # Global navigation, flash alert container
 │   └── footer.php               # Footer info, scripts, and layout termination
 │
@@ -116,17 +122,18 @@ taskflow/
 │   ├── create.php               # Standalone task creation page
 │   ├── edit.php                 # Task edit form with strict ownership check
 │   ├── delete.php               # Secure POST delete action handler
-│   └── update_status.php        # Quick status change action handler
+│   ├── update_status.php        # Quick status change action handler
+│   └── view.php                 # Task details view page with ownership check
 │
 ├── screenshots/
 │   └── README.md                # Screenshot capture guide and image checklist
 │
 ├── tests/
-│   ├── test_suite.py            # Automated verification harness for all 22 tests
-│   └── php_syntax_check.py      # State-machine lexer for PHP syntax auditing
+│   ├── test_suite.py            # Automated verification harness for all 27 tests
+│   ├── php_syntax_check.py      # State-machine lexer for PHP syntax auditing
+│   └── hash_gen.py              # Cryptographic BCRYPT seed generator
 │
 ├── database.sql                 # Complete database schema, foreign keys, & sample data
-├── index.php                    # Application landing page & smart router
 ├── README.md                    # Comprehensive documentation (this file)
 ├── TESTING.md                   # Formal testing report with pass/fail matrix
 ├── SUBMISSION_NOTES.md          # Official RTIH submission notes
@@ -370,5 +377,9 @@ During development and code review, the following genuine architectural and secu
 
 7. **Re-engineered Token Lexer for Accurate Delimiter Auditing:**  
    *Initial behavior:* A regex-based bracket counter misidentified delimiters inside HTML templates and multiline docblocks.  
-   *Modification:* Built an accurate state-machine lexer (`tests/php_syntax_check.py`) that properly separates HTML template states from PHP execution states, confirming zero syntax errors across all 15 PHP files.
+   *Modification:* Built an accurate state-machine lexer (`tests/php_syntax_check.py`) that properly separates HTML template states from PHP execution states, confirming zero syntax errors across all 20 PHP files.
+
+8. **Dedicated View Task Details & Root Navigation Entrypoints:**  
+   *Initial behavior:* Task descriptions were only displayed inside table cells.  
+   *Modification:* Created a dedicated `tasks/view.php` details page with strict ownership verification and integrated root shortcuts (`dashboard.php`, `login.php`, `register.php`, `logout.php`) so evaluators can navigate seamlessly via root URLs or modular subdirectories.
 

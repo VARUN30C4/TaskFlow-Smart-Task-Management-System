@@ -13,15 +13,15 @@ When running the application locally at `http://localhost/taskflow/` (or your lo
 
 | Filename | View / Page | Key Features to Highlight |
 | :--- | :--- | :--- |
-| `01_login_page.png` | **Sign In Screen** | Modern card layout, email/password fields, password visibility toggle, pre-loaded demo account credentials box. |
-| `02_registration_page.png` | **User Registration** | Full name, email, password strength, confirmation check, validation feedback indicators. |
-| `03_dashboard_overview.png` | **Task Dashboard** | Welcome banner greeting user by name, 4 statistics summary cards (Total, Pending, In Progress, Completed). |
-| `04_task_list_statuses.png` | **Task Table with Badges** | Clean table view showing tasks with distinct Bootstrap badges: Amber (`Pending`), Blue (`In Progress`), Green (`Completed`). |
-| `05_add_task_modal_or_page.png` | **Add Task Form** | Title, description with character counter, initial status selector, Save & Cancel buttons. |
-| `06_edit_task_page.png` | **Edit Task Screen** | Pre-populated task details, status dropdown, created-on metadata, breadcrumbs, Save changes button. |
-| `07_search_functionality.png` | **Search Results** | Search bar filtered by keyword (e.g. `PDO` or `Security`), demonstrating matching database results. |
-| `08_status_filtering.png` | **Status Filter in Action** | Dropdown filtered by `Pending`, `In Progress`, or `Completed`, showing filtered table and result count. |
-| `09_delete_confirmation.png` | **Delete Confirmation Modal** | Interactive Bootstrap modal displaying task title and warning before triggering secure POST deletion. |
+| `01-registration.png` | **User Registration Screen** | Full name, email, password strength, confirmation check, validation feedback indicators. |
+| `02-login.png` | **Sign In Screen** | Modern card layout, email/password fields, password visibility toggle, pre-loaded demo credentials box. |
+| `03-dashboard.png` | **Task Dashboard** | Welcome banner greeting user by name, 4 statistics summary cards (Total, Pending, In Progress, Completed). |
+| `04-create-task.png` | **Create Task Form** | Title, description with character counter, initial status selector, Save & Cancel buttons. |
+| `05-task-list.png` | **Task Table with Badges** | Clean table view showing tasks with distinct Bootstrap badges: Amber (`Pending`), Blue (`In Progress`), Green (`Completed`). |
+| `06-edit-task.png` | **Edit Task Screen** | Pre-populated task details, status dropdown, created-on metadata, breadcrumbs, Save changes button. |
+| `07-status-management.png` | **Status Management Modal** | Quick-change modal updating task status directly from table with instant badge update. |
+| `08-search-filter.png` | **Search & Filtering Results** | Search bar filtered by keyword (e.g. `PDO` or `Tracker`) combined with status dropdown. |
+| `09-user-isolation.png` | **User Isolation Demonstration** | Dashboard for User 2 (Jane Smith) showing only User 2's tasks, demonstrating strict multi-tenant boundary. |
 
 ---
 

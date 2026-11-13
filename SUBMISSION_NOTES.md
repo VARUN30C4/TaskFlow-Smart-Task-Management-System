@@ -43,7 +43,7 @@ Testing was performed using an automated verification suite (`tests/test_suite.p
   - **Total Test Cases Executed:** 27 (22 assignment functional requirements + 5 architectural integrity audits)
   - **Passed:** 27 (100%)
   - **Failed:** 0
-  - **Syntax Audit:** 15/15 PHP files verified with zero delimiter or syntax errors.
+  - **Syntax Audit:** 20/20 PHP files verified with zero delimiter or syntax errors.
 - **Category 2 (Live Runtime Environment on Host):**
   - **Status:** **NOT TESTED on Host Environment** because PHP CLI (`php.exe`), Apache (`httpd.exe`), and MySQL (`mysql.exe`) are not installed on the Windows host machine.
   - Live runtime testing instructions for XAMPP are detailed in Section 15 of `README.md`.
@@ -69,6 +69,7 @@ In compliance with RTIH guidelines:
   3. Consolidating 4 dashboard metric queries into a single high-performance SQL query.
   4. Restricting task deletion strictly to POST requests with confirmation modals.
   5. Developing a custom state-machine PHP tokenizer for structural syntax verification.
+  6. Added dedicated `tasks/view.php` details page and root entrypoint bridges (`dashboard.php`, `login.php`, `register.php`, `logout.php`) for robust multi-path navigation.
 
 ---
 

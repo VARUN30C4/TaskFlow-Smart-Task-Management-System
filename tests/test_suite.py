@@ -40,6 +40,10 @@ required_files = [
     "TESTING.md",
     "database.sql",
     "index.php",
+    "dashboard.php",
+    "login.php",
+    "register.php",
+    "logout.php",
     "assets/css/style.css",
     "assets/images/logo.svg",
     "assets/js/script.js",
@@ -58,14 +62,15 @@ required_files = [
     "tasks/edit.php",
     "tasks/index.php",
     "tasks/update_status.php",
+    "tasks/view.php",
 ]
 
 missing_files = [rf for rf in required_files if not os.path.isfile(os.path.join(WORKSPACE, rf))]
 record(
     "TC-FS-1",
-    "File System Integrity: All 25 required files exist in workspace",
+    "File System Integrity: All 30 required files exist in workspace",
     "All required architecture files exist",
-    "All 25 files present" if not missing_files else f"Missing: {missing_files}",
+    "All 30 files present" if not missing_files else f"Missing: {missing_files}",
     len(missing_files) == 0
 )
 
@@ -198,8 +203,8 @@ for pf in php_files:
 
 record(
     "TC-SYN-1",
-    "PHP Syntax & Delimiter Integrity: State-machine lexer on all 15 PHP files",
-    "All 15 PHP files contain balanced delimiters and valid syntax",
+    "PHP Syntax & Delimiter Integrity: State-machine lexer on all 20 PHP files",
+    "All 20 PHP files contain balanced delimiters and valid syntax",
     f"Passed: {len(php_files) - len(syntax_errors)}/{len(php_files)} files" if not syntax_errors else f"Errors: {syntax_errors}",
     len(syntax_errors) == 0
 )
@@ -475,16 +480,18 @@ record(
     has_flash_ui
 )
 
-# TC-17: IDOR Protection on Edit (User A cannot edit User B's task)
+# TC-17: IDOR Protection on View & Edit (User A cannot view or edit User B's task)
+cursor.execute("SELECT id, title FROM tasks WHERE id = ? AND user_id = ?", (t4_id, u1_id))
+idor_view = cursor.fetchone()
 idor_edit = edit_task(u1_id, t4_id, "Tampered by User A", "Malicious attempt", "Completed")
 cursor.execute("SELECT title FROM tasks WHERE id = ?", (t4_id,))
 t4_unaltered = cursor.fetchone()[0]
 record(
     "TC-17",
-    "Authorization (IDOR): Block User A from editing User B's task via ID tampering",
-    "Query updates 0 rows; User B's task remains unaltered",
-    f"Blocked IDOR edit: affected rows = {idor_edit}, title intact: '{t4_unaltered}'",
-    not idor_edit and t4_unaltered == "Jane's Private Task"
+    "Authorization (IDOR): Block User A from viewing/editing User B's task via ID tampering",
+    "Queries return None and update 0 rows; User B's task remains unaltered",
+    f"Blocked IDOR view: {idor_view is None}, edit rows affected: {idor_edit}, title intact: '{t4_unaltered}'",
+    (idor_view is None) and not idor_edit and t4_unaltered == "Jane's Private Task"
 )
 
 # TC-18: IDOR Protection on Delete (User A cannot delete User B's task)
