@@ -26,5 +26,8 @@ $RECYCLE.BIN/
 *.dump
 *.sql.gz
 
-# Archive files (except explicit releases)
-# TaskFlow_RTIH_Submission.zip
+# Archive files
+TaskFlow_RTIH_Submission.zip
+*.zip
+*.tar.gz
+

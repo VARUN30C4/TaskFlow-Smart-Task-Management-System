@@ -25,3 +25,4 @@ logout_user();
 
 set_flash_message('info', 'You have been signed out successfully. Have a productive day!');
 redirect('auth/login.php');
+

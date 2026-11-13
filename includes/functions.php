@@ -95,6 +95,14 @@ function base_url(string $path = ''): string
  */
 function redirect(string $url, int $statusCode = 303): never
 {
+    // Prevent CRLF / HTTP Header Injection
+    $url = str_replace(["\r", "\n"], '', $url);
+
+    // Prevent Protocol-relative Open Redirect (e.g. "//evil.com")
+    if (str_starts_with($url, '//')) {
+        $url = '/' . ltrim($url, '/');
+    }
+
     // If URL does not start with http:// or https://, resolve using base_url
     if (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
         $url = base_url($url);
@@ -176,3 +184,4 @@ function format_datetime(?string $datetime): string
         return e($datetime);
     }
 }
+

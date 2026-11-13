@@ -38,8 +38,26 @@ if ($taskId === false || $taskId === null || $taskId <= 0 || !in_array($status, 
     redirect('tasks/index.php');
 }
 
-// 3. Strict Backend Authorization: Update only if task belongs to current user
+// 3. Strict Backend Authorization: Verify task ownership
 $pdo = getDBConnection();
+$checkStmt = $pdo->prepare('SELECT id, status FROM tasks WHERE id = :id AND user_id = :user_id LIMIT 1');
+$checkStmt->execute([
+    ':id'      => $taskId,
+    ':user_id' => $userId,
+]);
+$existingTask = $checkStmt->fetch();
+
+if (!$existingTask) {
+    set_flash_message('danger', 'Task not found or you do not have permission to modify this task.');
+    redirect('tasks/index.php');
+}
+
+if ($existingTask['status'] === $status) {
+    set_flash_message('info', 'Task is already marked as "' . $status . '".');
+    redirect('tasks/index.php');
+}
+
+// 4. Update task status with ownership check
 $updateStmt = $pdo->prepare('UPDATE tasks SET status = :status WHERE id = :id AND user_id = :user_id');
 $updateStmt->execute([
     ':status'  => $status,
@@ -47,11 +65,6 @@ $updateStmt->execute([
     ':user_id' => $userId,
 ]);
 
-if ($updateStmt->rowCount() > 0) {
-    set_flash_message('success', 'Task status changed to "' . $status . '".');
-} else {
-    // If rowCount is 0, status was already the same or task was unauthorized
-    set_flash_message('info', 'No changes made, or task is not accessible.');
-}
-
+set_flash_message('success', 'Task status updated to "' . $status . '".');
 redirect('tasks/index.php');
+

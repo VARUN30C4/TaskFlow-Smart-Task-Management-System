@@ -130,3 +130,4 @@ function logout_user(): void
 
     session_destroy();
 }
+

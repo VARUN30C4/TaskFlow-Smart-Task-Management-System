@@ -39,10 +39,14 @@
 
 Testing was performed using an automated verification suite (`tests/test_suite.py`) simulating database operations and authorization boundaries, combined with a custom state-machine PHP lexer (`tests/php_syntax_check.py`).
 
-- **Total Test Cases Executed:** 26
-- **Passed:** 26 (100%)
-- **Failed:** 0
-- **Syntax Audit:** 15/15 PHP files verified with zero delimiter or syntax errors.
+- **Category 1 (Offline Automated Verification Suite):**
+  - **Total Test Cases Executed:** 27 (22 assignment functional requirements + 5 architectural integrity audits)
+  - **Passed:** 27 (100%)
+  - **Failed:** 0
+  - **Syntax Audit:** 15/15 PHP files verified with zero delimiter or syntax errors.
+- **Category 2 (Live Runtime Environment on Host):**
+  - **Status:** **NOT TESTED on Host Environment** because PHP CLI (`php.exe`), Apache (`httpd.exe`), and MySQL (`mysql.exe`) are not installed on the Windows host machine.
+  - Live runtime testing instructions for XAMPP are detailed in Section 15 of `README.md`.
 
 Detailed test logs and pass/fail criteria are documented in [`TESTING.md`](file:///A:/TaskFlow%20–%20Smart%20Task%20Management%20System/TESTING.md).
 
@@ -74,3 +78,4 @@ For quick evaluation, the database seed includes:
 - **Email:** `john.doe@example.com`
 - **Password:** `Password123!`
 - **Alternative Account:** `jane.smith@example.com` / `Password123!`
+

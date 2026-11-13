@@ -34,3 +34,4 @@ When running the application locally at `http://localhost/taskflow/` (or your lo
    - **Password:** `Password123!`
 4. Use `Windows Key + Shift + S` or Chrome DevTools Device Mode (`Ctrl + Shift + M` -> `Ctrl + Shift + P` -> `Capture full size screenshot`).
 5. Save the image files with the exact names listed above into this `screenshots/` directory.
+

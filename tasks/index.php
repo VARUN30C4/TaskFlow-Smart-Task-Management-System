@@ -24,15 +24,15 @@ $currentUser = current_user();
 $pdo = getDBConnection();
 
 // 1. Fetch Dashboard Statistics strictly for the logged-in user
-$statsStmt = $pdo->prepare('
+$statsStmt = $pdo->prepare("
     SELECT 
         COUNT(*) AS total,
-        COALESCE(SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END), 0) AS pending,
-        COALESCE(SUM(CASE WHEN status = "In Progress" THEN 1 ELSE 0 END), 0) AS in_progress,
-        COALESCE(SUM(CASE WHEN status = "Completed" THEN 1 ELSE 0 END), 0) AS completed
+        COALESCE(SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END), 0) AS pending,
+        COALESCE(SUM(CASE WHEN status = 'In Progress' THEN 1 ELSE 0 END), 0) AS in_progress,
+        COALESCE(SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END), 0) AS completed
     FROM tasks 
     WHERE user_id = :user_id
-');
+");
 $statsStmt->execute([':user_id' => $userId]);
 $stats = $statsStmt->fetch() ?: ['total' => 0, 'pending' => 0, 'in_progress' => 0, 'completed' => 0];
 
@@ -536,3 +536,4 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+

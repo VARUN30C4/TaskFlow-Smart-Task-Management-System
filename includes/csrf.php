@@ -141,3 +141,4 @@ function verify_csrf_or_die(): void
         }
     }
 }
+

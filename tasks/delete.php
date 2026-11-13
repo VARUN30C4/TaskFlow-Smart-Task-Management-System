@@ -54,3 +54,4 @@ if ($deleteStmt->rowCount() > 0) {
 }
 
 redirect('tasks/index.php');
+

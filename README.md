@@ -292,23 +292,30 @@ TaskFlow implements an **Owner-Based Access Control** multi-tenant architecture:
 5. **Session Fixation Defense:** `session_regenerate_id(true)` is invoked immediately upon successful credential verification.
 6. **Cookie Security:** Session cookies are configured with `HttpOnly = true`, `SameSite = Lax`, and path scoping.
 7. **Safe Error Handling:** Raw SQL exceptions are caught via `try/catch` and logged to the server error log; end users receive friendly recovery screens without database credential exposure.
+8. **CRLF Injection & Open Redirect Defense:** `redirect()` cleans line breaks (`\r`, `\n`) and protocol-relative URLs (`//evil.com`) to prevent HTTP response splitting and open redirects.
 
 ---
 
 ## 22. Test Cases and Results
-All 22 assignment test requirements plus architectural validations were executed through an automated test suite (`tests/test_suite.py`) and a custom state-machine PHP lexer (`tests/php_syntax_check.py`).
 
-- **Total Test Cases:** 26  
-- **Passed:** 26 (100%)  
-- **Failed:** 0  
+### Testing Discrepancy Clarification & Categorization
+In strict compliance with RTIH guidelines, test results are clearly categorized:
+- **Category 1 (Offline Verification & Emulation):** All 22 required assignment functional tests plus 5 architectural integrity audits (Total: **27 test cases**) were executed and verified using an automated Python test runner (`tests/test_suite.py`) and a state-machine PHP syntax lexer (`tests/php_syntax_check.py`).
+  - **Offline Tests Executed:** 27
+  - **Offline Tests Passed:** 27 (100%)
+  - **Offline Tests Failed:** 0
+- **Category 2 (Live Runtime Environment Tests on Apache/MySQL):**
+  - **Status:** **NOT TESTED on Host Environment** because PHP CLI (`php.exe`), Apache (`httpd.exe`), and MySQL (`mysql.exe`) are not installed on the current Windows host system.
+  - Runtime verification must be performed once XAMPP is installed locally.
 
 Refer to [`TESTING.md`](file:///A:/TaskFlow%20–%20Smart%20Task%20Management%20System/TESTING.md) for the complete test execution matrix.
 
 ---
 
 ## 23. Known Limitations
-1. **Network Sandbox Restriction:** In sandboxed CLI environments without Apache running, automated live-browser screenshot capture cannot run localhost; live screenshots are to be captured once XAMPP Apache is started locally.
-2. **Email Delivery:** Registration does not send transactional activation emails (kept lightweight to avoid external SMTP dependencies for the assignment scope).
+1. **Host Environment Dependencies:** PHP CLI, Apache, and MySQL are not installed on the local host machine; live browser execution requires installing XAMPP.
+2. **Manual Screenshot Capture Required:** Because Apache is not running on the local host, live screenshots could not be automatically captured; a complete manual capture checklist is provided in `screenshots/README.md`.
+3. **Email Delivery:** Registration does not send transactional activation emails (kept lightweight to avoid external SMTP dependencies for the assignment scope).
 
 ---
 
@@ -353,6 +360,15 @@ During development and code review, the following genuine architectural and secu
    *Initial behavior:* Early deletion handler accepted GET parameters via `delete.php?id=...`.  
    *Modification:* Strictly restricted deletion to POST requests accompanied by valid CSRF tokens and an interactive confirmation modal, completely preventing accidental or malicious deletion via image tags or URL pre-fetching.
 
-5. **Re-engineered Token Lexer for Accurate Delimiter Auditing:**  
+5. **CRLF Injection & Open Redirect Defense in `redirect()`:**  
+   *Initial behavior:* `redirect()` directly forwarded URLs without filtering.  
+   *Modification:* Stripped carriage returns and newlines, and normalized protocol-relative `//` URLs to avoid HTTP response splitting and external phishing redirects.
+
+6. **Differentiated Status No-Op from Unauthorized Mutations:**  
+   *Initial behavior:* If a user submitted a status update without changing the status, MySQL returned 0 rows, triggering an ambiguous error message.  
+   *Modification:* Added a pre-fetch verification step in `tasks/update_status.php` to distinctly report whether a task is unauthorized vs. already set to that status.
+
+7. **Re-engineered Token Lexer for Accurate Delimiter Auditing:**  
    *Initial behavior:* A regex-based bracket counter misidentified delimiters inside HTML templates and multiline docblocks.  
    *Modification:* Built an accurate state-machine lexer (`tests/php_syntax_check.py`) that properly separates HTML template states from PHP execution states, confirming zero syntax errors across all 15 PHP files.
+

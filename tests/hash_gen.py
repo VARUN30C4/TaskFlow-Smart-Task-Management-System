@@ -19,3 +19,4 @@ with open("database.sql", "w", encoding="utf-8") as f:
     f.write(new_sql)
 
 print("Updated database.sql with verified hash.")
+
