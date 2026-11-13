@@ -1,0 +1,30 @@
+# Environment and sensitive configuration
+.env
+.env.local
+.env.*.local
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Log and temporary files
+*.log
+*.tmp
+*.bak
+/tmp/
+
+# Database dumps with live data (keep database.sql safe)
+*.dump
+*.sql.gz
+
+# Archive files (except explicit releases)
+# TaskFlow_RTIH_Submission.zip
