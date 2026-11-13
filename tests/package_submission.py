@@ -33,8 +33,8 @@ def package_submission():
                 full_path = os.path.join(root, f)
                 rel_path = os.path.relpath(full_path, base_dir)
                 
-                # Prepend taskflow/ directory inside zip for clean extraction
-                archive_name = os.path.join("taskflow", rel_path).replace("\\", "/")
+                # Archive relative to project root
+                archive_name = rel_path.replace("\\", "/")
                 
                 file_size = os.path.getsize(full_path)
                 total_uncompressed_bytes += file_size
@@ -55,3 +55,4 @@ def package_submission():
 
 if __name__ == "__main__":
     package_submission()
+
