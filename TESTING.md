@@ -108,16 +108,40 @@ OFFLINE VERIFICATION SUITE SUMMARY: 27/27 PASSED (100%)
 
 ## 4. Category 2: Live Runtime Tests on Apache & MySQL (Host Environment Status)
 
-| Test Item | Runtime Target | Status on Current Host | Reason & Resolution |
-| :--- | :--- | :---: | :--- |
-| **PHP CLI Syntax Linting (`php -l`)** | CLI binary `php.exe` | **NOT TESTED** | PHP is not installed on the Windows host. Resolved offline via custom state-machine lexer (`tests/php_syntax_check.py`). |
-| **Live MySQL Database Connection** | MySQL service port 3306 | **NOT TESTED** | MySQL is not installed/running on the host. Resolved offline via SQLite in-memory emulation and SQL parser. |
-| **Live Web Browser Navigation** | Apache service port 80 | **NOT TESTED** | Apache is not installed/running on the host. Resolved offline via file templates and manual screenshot guide. |
+The local host environment was audited on November 13, 2026. Because XAMPP is not currently installed on the host operating system (`C:\xampp` does not exist, and `php.exe`, `httpd.exe`, `mysqld.exe` are not present), **all live runtime web and server tests are currently BLOCKED and marked NOT TESTED**.
 
-### How to Run Live Runtime Tests Locally (Once XAMPP is Installed):
-1. Install XAMPP 8.0+ from [https://www.apachefriends.org/](https://www.apachefriends.org/).
-2. Copy `taskflow` into `C:\xampp\htdocs\taskflow`.
-3. Start Apache and MySQL from the XAMPP Control Panel.
-4. Import `database.sql` into phpMyAdmin (`http://localhost/phpmyadmin/`).
-5. Open `http://localhost/taskflow/` in Google Chrome or Microsoft Edge.
-6. Verify login with `john.doe@example.com` / `Password123!`.
+| Runtime Test Item | Testing Target | Host Environment Status | Detailed Audit Finding & Reason |
+| :--- | :--- | :---: | :--- |
+| **RT-01: PHP CLI Syntax Linting (`php -l`)** | CLI binary `php.exe` | **BLOCKED / NOT TESTED** | `php.exe` not found in PATH or disk. Structural syntax verified offline via custom lexer. |
+| **RT-02: Apache Server Daemon** | Port 80 / 443 | **BLOCKED / NOT TESTED** | Apache service not installed or listening on port 80. |
+| **RT-03: MySQL / MariaDB Server Daemon** | Port 3306 | **BLOCKED / NOT TESTED** | MySQL service not installed or listening on port 3306. |
+| **RT-04: phpMyAdmin Import of `database.sql`** | Web interface / CLI | **BLOCKED / NOT TESTED** | Requires active MySQL and Apache daemons to access phpMyAdmin. |
+| **RT-05: Live Database PDO Connection** | `config/database.php` | **BLOCKED / NOT TESTED** | Requires active MySQL service on port 3306. |
+| **RT-06: Live HTTP User Registration** | `auth/register.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-07: Live HTTP User Login** | `auth/login.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-08: Live HTTP User Logout** | `auth/logout.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. |
+| **RT-09: Live HTTP Task Creation** | `tasks/create.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-10: Live HTTP Task Details View** | `tasks/view.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. |
+| **RT-11: Live HTTP Task Editing** | `tasks/edit.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-12: Live HTTP Task Deletion** | `tasks/delete.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-13: Live HTTP Status Management** | `tasks/update_status.php`| **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-14: Live Search by Title** | `tasks/index.php?search=` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-15: Live Status Filtering** | `tasks/index.php?status=` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-16: Live Validation Feedback** | Client & Server forms | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. |
+| **RT-17: Multi-User Account Isolation** | Cross-Account queries | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-18: Live IDOR Tampering Defense** | URL & payload ID edits | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
+| **RT-19: Unauthorized Route Interception** | `require_auth()` guard | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Statically reviewed in `includes/auth.php`. |
+| **RT-20: Live CSRF Token Rejection** | POST without token | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Statically reviewed in `includes/csrf.php`. |
+| **RT-21: Browser Console & Log Inspection** | Apache & PHP logs | **BLOCKED / NOT TESTED** | Requires active Apache log files in `C:\xampp\apache\logs`. |
+
+---
+
+## 5. How to Run Live Runtime Tests Locally (Step-by-Step for Candidate):
+1. **Download XAMPP:** Download XAMPP for Windows (PHP 8.2 or 8.1) from [https://www.apachefriends.org/download.html](https://www.apachefriends.org/download.html).
+2. **Install XAMPP:** Run the installer and complete setup to `C:\xampp`.
+3. **Copy Project Folder:** Copy `A:\TaskFlow – Smart Task Management System` into `C:\xampp\htdocs\taskflow`.
+4. **Start Daemons:** Open XAMPP Control Panel and click **Start** on **Apache** and **MySQL**.
+5. **Import Database:** Navigate to `http://localhost/phpmyadmin/`, select the **Import** tab, choose `database.sql`, and click **Go**.
+6. **Open in Browser:** Navigate to `http://localhost/taskflow/` in Google Chrome or Microsoft Edge.
+7. **Verify Accounts:** Log in with `john.doe@example.com` / `Password123!` and test features.
+8. **Capture Screenshots:** Follow `screenshots/README.md` to save all 9 genuine images.

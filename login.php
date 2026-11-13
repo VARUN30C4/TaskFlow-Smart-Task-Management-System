@@ -12,3 +12,4 @@ define('TASKFLOW_APP', true);
 
 require_once __DIR__ . '/includes/functions.php';
 redirect('auth/login.php');
+
