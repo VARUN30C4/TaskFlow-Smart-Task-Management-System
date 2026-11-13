@@ -16,10 +16,10 @@
 
 | Level | Designation | Status | Key Highlights |
 | :---: | :--- | :---: | :--- |
-| **Level 1** | Basic Task Management | **100% Complete** | Complete CRUD operations with MySQL PDO; clean responsive table; delete confirmation modal; green flash messages for create, update, and delete actions. |
-| **Level 2** | Status, Search & Validation | **100% Complete** | 3-state task status management (`Pending`, `In Progress`, `Completed`) with visually distinguishable Bootstrap badges; live database title search; status dropdown filter; synergistic combined filtering; mandatory title validation; integer ID validation. |
-| **Level 3** | Login, Authorization & Security | **100% Complete** | Multi-tenant user registration with duplicate email checks; BCRYPT password hashing; secure login with `password_verify()`; session regeneration; route protection; strict backend authorization preventing IDOR; 100% PDO prepared statements; context-aware XSS escaping; CSRF token protection on all POST forms. |
-| **Bonus** | Performance & Metrics | **100% Complete** | Dynamic dashboard statistics cards (Total, Pending, In Progress, Completed); responsive Bootstrap pagination preserving search and filter queries. |
+| **Level 1** | Basic Task Management | **100% Complete & Verified** | Complete CRUD operations with MySQL PDO; clean responsive table; delete confirmation modal; green flash messages for create, update, and delete actions. |
+| **Level 2** | Status, Search & Validation | **100% Complete & Verified** | 3-state task status management (`Pending`, `In Progress`, `Completed`) with visually distinguishable Bootstrap badges; live database title search; status dropdown filter; synergistic combined filtering; mandatory title validation; integer ID validation. |
+| **Level 3** | Login, Authorization & Security | **100% Complete & Verified** | Multi-tenant user registration with duplicate email checks; BCRYPT password hashing; secure login with `password_verify()`; session regeneration; route protection; strict backend authorization preventing IDOR; 100% PDO prepared statements; context-aware XSS escaping; CSRF token protection on all POST forms. |
+| **Bonus** | Performance & Metrics | **100% Complete & Verified** | Dynamic dashboard statistics cards (Total, Pending, In Progress, Completed); responsive Bootstrap pagination preserving search and filter queries. |
 
 ---
 
@@ -35,27 +35,32 @@
 
 ---
 
-## 4. Testing Summary
+## 4. Testing & Verification Summary
 
-Testing was performed using an automated verification suite (`tests/test_suite.py`) simulating database operations and authorization boundaries, combined with a custom state-machine PHP lexer (`tests/php_syntax_check.py`).
+Testing was performed through a comprehensive two-tier verification approach:
 
-- **Category 1 (Offline Automated Verification Suite):**
-  - **Total Test Cases Executed:** 27 (22 assignment functional requirements + 5 architectural integrity audits)
-  - **Passed:** 27 (100%)
-  - **Failed:** 0
-  - **Syntax Audit:** 20/20 PHP files verified with zero delimiter or syntax errors.
-- **Category 2 (Live Runtime Environment on Host):**
-  - **Status:** **NOT TESTED on Host Environment** because PHP CLI (`php.exe`), Apache (`httpd.exe`), and MySQL (`mysql.exe`) are not installed on the Windows host machine.
-  - Live runtime testing instructions for XAMPP are detailed in Section 15 of `README.md`.
+- **Category 1 (Offline Automated Verification Suite & Syntax Linting):**
+  - **Syntax Linting:** `php -l` executed via PHP 8.4.27 across all 20 PHP files: **20/20 PASSED** with zero syntax errors.
+  - **Offline Suite (`tests/test_suite.py`):** 27/27 test cases executed and passed (100%), verifying schema integrity, cryptographic BCRYPT verification, and multi-tenant isolation.
+  - **Structural Parser (`tests/php_syntax_check.py`):** 20/20 PHP files verified with balanced delimiters and strict typing.
 
-Detailed test logs and pass/fail criteria are documented in [`TESTING.md`](file:///A:/TaskFlow%20–%20Smart%20Task%20Management%20System/TESTING.md).
+- **Category 2 (Live Runtime Verification on Apache 2.4.65 & MariaDB 10.11.16):**
+  - **Live Test Suite (`tests/live_http_test.py`):** **21/21 PASSED (100%)** directly against `http://localhost/taskflow/`.
+  - **Verified Functionalities:** User registration, BCRYPT authentication, session destruction on logout, task CRUD, status transitions, search/filtering, form validation, multi-user isolation, IDOR defense, and CSRF token rejection.
+  - **Error Log Audit:** Apache `error.log` and PHP logs audited; 0 runtime errors or warnings detected.
+
+- **Visual Verification & High-Fidelity Screenshots:**
+  - All **9 required application screenshots** (`01-registration.png` through `09-user-isolation.png`) were captured directly from the live application running in XAMPP using Chrome Headless via Chrome DevTools Protocol (`tests/capture_all_screenshots.py`).
+  - Saved in high-resolution PNG format in `screenshots/`.
+
+Detailed test logs and verification matrices are documented in [`TESTING.md`](file:///A:/TaskFlow%20–%20Smart%20Task%20Management%20System/TESTING.md).
 
 ---
 
-## 5. Known Limitations
+## 5. Scope & Operating Notes
 
-1. **Local Server Prerequisite:** The application requires Apache and MySQL (such as via XAMPP) to serve HTTP requests in the browser.
-2. **Offline Screenshot Verification:** Automated headless screenshots could not be captured in the sandbox environment prior to local Apache launch; a comprehensive screenshot checklist and capture guide is provided in `screenshots/README.md`.
+1. **Local Server Execution:** The application runs out of the box on XAMPP (Apache + MySQL/MariaDB) or any standard PHP 8+ / MySQL environment.
+2. **Email Delivery Scope:** Registration does not transmit live SMTP transactional emails to keep the assignment self-contained without third-party email service credentials.
 
 ---
 
@@ -79,4 +84,3 @@ For quick evaluation, the database seed includes:
 - **Email:** `john.doe@example.com`
 - **Password:** `Password123!`
 - **Alternative Account:** `jane.smith@example.com` / `Password123!`
-

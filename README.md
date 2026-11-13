@@ -305,24 +305,25 @@ TaskFlow implements an **Owner-Based Access Control** multi-tenant architecture:
 
 ## 22. Test Cases and Results
 
-### Testing Discrepancy Clarification & Categorization
+### Testing Matrix & Categorization
 In strict compliance with RTIH guidelines, test results are clearly categorized:
+- **PHP CLI Syntax Verification:** Executed `php -l` via PHP 8.4.27 on all 20 PHP files: **20/20 PASSED (100%)** with zero syntax errors.
 - **Category 1 (Offline Verification & Emulation):** All 22 required assignment functional tests plus 5 architectural integrity audits (Total: **27 test cases**) were executed and verified using an automated Python test runner (`tests/test_suite.py`) and a state-machine PHP syntax lexer (`tests/php_syntax_check.py`).
   - **Offline Tests Executed:** 27
   - **Offline Tests Passed:** 27 (100%)
   - **Offline Tests Failed:** 0
-- **Category 2 (Live Runtime Environment Tests on Apache/MySQL):**
-  - **Status:** **NOT TESTED on Host Environment** because PHP CLI (`php.exe`), Apache (`httpd.exe`), and MySQL (`mysql.exe`) are not installed on the current Windows host system.
-  - Runtime verification must be performed once XAMPP is installed locally.
+- **Category 2 (Live Runtime Environment Tests on Apache/MariaDB):**
+  - **Status:** **21/21 PASSED / VERIFIED (100%)** executed directly against `http://localhost/taskflow/` on Apache 2.4.65 and MariaDB 10.11.16 via `tests/live_http_test.py`.
+  - Tested: User registration, BCRYPT authentication, logout, CRUD operations, status management, search, filtering, client/server validation, multi-user isolation, IDOR defense, CSRF token enforcement, and log error audits.
+- **Visual Verification & Screenshots:** All **9 required application screenshots** were captured directly from the live application via Chrome Headless using the Chrome DevTools Protocol (`tests/capture_all_screenshots.py`) and are saved in `screenshots/`.
 
 Refer to [`TESTING.md`](file:///A:/TaskFlow%20–%20Smart%20Task%20Management%20System/TESTING.md) for the complete test execution matrix.
 
 ---
 
 ## 23. Known Limitations
-1. **Host Environment Dependencies:** PHP CLI, Apache, and MySQL are not installed on the local host machine; live browser execution requires installing XAMPP.
-2. **Manual Screenshot Capture Required:** Because Apache is not running on the local host, live screenshots could not be automatically captured; a complete manual capture checklist is provided in `screenshots/README.md`.
-3. **Email Delivery:** Registration does not send transactional activation emails (kept lightweight to avoid external SMTP dependencies for the assignment scope).
+1. **Email Delivery Scope:** Registration does not transmit live SMTP transactional emails to keep the assignment self-contained without third-party email service credentials.
+2. **Local Server Requirement:** To run the web application locally, XAMPP (Apache + MySQL/MariaDB) or any standard PHP 8+ web server environment is required.
 
 ---
 

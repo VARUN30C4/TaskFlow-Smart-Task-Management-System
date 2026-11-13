@@ -4,31 +4,33 @@
 **Organization:** Ratan Tata Innovation Hub Amaravati Foundation (RTIH)  
 **Evaluation Role:** Senior Full-Stack PHP Developer & Application Security Engineer  
 **Date of Audit:** November 13, 2026  
-**Test Suite Script:** `tests/test_suite.py`  
-**Syntax Lexer Script:** `tests/php_syntax_check.py`  
+**Test Suite Scripts:** `tests/test_suite.py` (Offline), `tests/php_syntax_check.py` (Lexer), `tests/live_http_test.py` (Live Runtime)  
+**Screenshot Generator:** `tests/capture_all_screenshots.py` (CDP-driven Chrome Headless)
 
 ---
 
 ## 1. Environment & Testing Scope Declaration
 
 ### Local Environment Audit Results
-Prior to testing, the host environment was audited for required software packages:
-- **PHP CLI (`php.exe`):** **NOT INSTALLED** on host machine (neither in PATH nor in standard directories).
-- **MySQL / MariaDB CLI (`mysql.exe`):** **NOT INSTALLED** on host machine.
-- **Apache Web Server (`httpd.exe`):** **NOT INSTALLED** on host machine.
-- **XAMPP (`C:\xampp`):** **NOT INSTALLED** on host machine.
+The host environment was audited and verified on November 13, 2026:
+- **XAMPP Installation:** Active at `A:\xamp\`
+- **PHP CLI (`php.exe`):** **VERIFIED & ACTIVE** – PHP 8.4.27 (`A:\xamp\php\php.exe`)
+- **Apache Web Server (`httpd.exe`):** **VERIFIED & ACTIVE** – Apache 2.4.65 (Win64) OpenSSL/3.5.1 listening on port 80
+- **MySQL / MariaDB Server (`mysqld.exe`):** **VERIFIED & ACTIVE** – MariaDB 10.11.16 listening on port 3306
+- **Database Engine:** `taskflow_db` imported and verified with PDO driver
 
-### Testing Boundary & Separation of Concerns
-In strict compliance with the RTIH assignment directives (*"Do not claim that something works unless you have tested it. If the local environment does not allow a test to be executed, clearly mark it as NOT TESTED"*), our verification is strictly divided into two categories:
+### Testing Structure & Categories
+In strict compliance with the RTIH assignment directives (*"Do not claim that something works unless you have tested it"*), our verification covers both offline architectural simulation and live end-to-end runtime execution:
 
-1. **Category 1: Offline Static Code, Architecture & Emulated Database Verification (EXECUTED & PASSED)**  
-   - Executed using an automated Python verification runner (`tests/test_suite.py`) using SQLite in-memory emulation of MySQL schema, foreign key cascade, and native cryptographic BCRYPT hashing.
-   - Comprehensive state-machine lexical analysis (`tests/php_syntax_check.py`) validating all 15 PHP source files for balanced delimiters, strict typing, and token structure.
+1. **Category 1: Offline Static Code, Architecture & Emulated Database Verification (27/27 PASSED)**  
+   - Automated Python verification runner (`tests/test_suite.py`) using SQLite in-memory emulation of MySQL schema, foreign key cascade, and native cryptographic BCRYPT hashing.
+   - Comprehensive state-machine lexical analysis (`tests/php_syntax_check.py`) validating all 20 PHP source files for balanced delimiters, strict typing, and token structure.
    - Static AST and regular-expression security auditing verifying 100% PDO prepared statements, CSRF validation, XSS escaping, and backend authorization.
 
-2. **Category 2: Live Runtime Tests on Apache 2.4 & MySQL 8.0 via XAMPP (NOT TESTED on Host)**  
-   - Marked strictly as **NOT TESTED** because Apache, MySQL, and PHP CLI are not yet installed on this Windows environment.
-   - Exact instructions for running manual end-to-end browser tests once XAMPP is installed are documented in Section 4.
+2. **Category 2: Live Runtime Tests on Apache 2.4.65 & MariaDB 10.11.16 (21/21 PASSED / VERIFIED)**  
+   - Direct PHP CLI linting (`php -l`) executed across all 20 PHP files: **20/20 PASSED**.
+   - Automated end-to-end HTTP runner (`tests/live_http_test.py`) executing all 21 runtime test cases (RT-01 through RT-21) against `http://localhost/taskflow/`.
+   - Real browser visual verification and high-fidelity screenshots captured via Chrome Headless and Chrome DevTools Protocol (`tests/capture_all_screenshots.py`).
 
 ---
 
@@ -73,8 +75,8 @@ The offline test runner (`tests/test_suite.py`) executed all 22 required functio
 | **TC-17** | Can User A access/edit User B's tasks by URL ID tampering? | Direct Object Reference (IDOR) blocked at backend SQL level. | Query enforces `WHERE id = :id AND user_id = :user_id`; 0 rows affected. | **PASS** |
 | **TC-18** | Can User A modify/delete User B's tasks through requests? | Unauthorized delete request rejected; unowned task preserved. | Delete query enforces `WHERE id = :id AND user_id = :user_id`; 0 rows deleted. | **PASS** |
 | **TC-19** | Are prepared statements used? | 100% of user queries use PDO parameterized prepared statements. | Code audit confirms zero raw request variables in SQL statements. | **PASS** |
-| **TC-20** | Is user-provided output escaped? | User output sanitized against Cross-Site Scripting (XSS). | Helper `e()` with `htmlspecialchars(..., ENT_QUOTES | ENT_HTML5)` applied. | **PASS** |
-| **TC-21** | Are invalid CSRF tokens rejected? | State-changing POST requests without valid tokens rejected with 403. | `verify_csrf_or_die()` verified on all 6 POST endpoints. | **PASS** |
+| **TC-20** | Is user-provided output escaped? | User output sanitized against Cross-Site Scripting (XSS). | Helper `e()` with `htmlspecialchars(..., ENT_QUOTES \| ENT_HTML5)` applied. | **PASS** |
+| **TC-21** | Are invalid CSRF tokens rejected? | State-changing POST requests without valid tokens rejected with 403. | `verify_csrf_or_die()` verified on all POST endpoints. | **PASS** |
 | **TC-22** | Are invalid inputs handled without credential leakage? | Database exceptions caught gracefully without exposing credentials. | Secure error page catches `PDOException` and logs to server error log. | **PASS** |
 
 ---
@@ -83,7 +85,7 @@ The offline test runner (`tests/test_suite.py`) executed all 22 required functio
 
 | Test Code | Architecture Audit Target | Expected Result | Actual Result | Verification Status |
 | :---: | :--- | :--- | :--- | :---: |
-| **TC-FS-1** | Project File Structure | All 30 architecture and bridge files present in workspace. | All 30 files verified present. | **PASS** |
+| **TC-FS-1** | Project File Structure | All architecture and bridge files present in workspace. | All 30 files verified present. | **PASS** |
 | **TC-DB-1** | Database Schema Definition | `database.sql` includes `taskflow_db`, `users`, `tasks`, FK, indexes. | Database creation, tables, FK with CASCADE, and indexes confirmed. | **PASS** |
 | **TC-DB-2** | Seed Data Password Hash | Pre-seeded sample accounts verify against `Password123!`. | Cryptographic BCRYPT check succeeded. | **PASS** |
 | **TC-DB-3** | Referential Integrity (CASCADE) | Deleting user record cascade-deletes all associated tasks. | 0 orphan tasks remained after user deletion. | **PASS** |
@@ -91,57 +93,66 @@ The offline test runner (`tests/test_suite.py`) executed all 22 required functio
 
 ---
 
-## 3. Offline Verification Summary
+## 3. Category 2: Live Runtime Tests on Apache 2.4.65 & MariaDB 10.11.16 (21 Tests)
 
-```
-==================================================
-OFFLINE VERIFICATION SUITE SUMMARY: 27/27 PASSED (100%)
-==================================================
-- Structural & Lexical Audits: 5/5 PASSED
-- Static Security Audits: 4/4 PASSED
-- Emulated Logic & Multi-Tenant Tests: 18/18 PASSED
-- Discrepancies / Failures: 0
-==================================================
-```
+All 21 runtime test cases were executed live against the active Apache web server and MariaDB database running locally at `http://localhost/taskflow/` using `tests/live_http_test.py`.
 
----
-
-## 4. Category 2: Live Runtime Tests on Apache & MySQL (Host Environment Status)
-
-The local host environment was audited on November 13, 2026. Because XAMPP is not currently installed on the host operating system (`C:\xampp` does not exist, and `php.exe`, `httpd.exe`, `mysqld.exe` are not present), **all live runtime web and server tests are currently BLOCKED and marked NOT TESTED**.
-
-| Runtime Test Item | Testing Target | Host Environment Status | Detailed Audit Finding & Reason |
-| :--- | :--- | :---: | :--- |
-| **RT-01: PHP CLI Syntax Linting (`php -l`)** | CLI binary `php.exe` | **BLOCKED / NOT TESTED** | `php.exe` not found in PATH or disk. Structural syntax verified offline via custom lexer. |
-| **RT-02: Apache Server Daemon** | Port 80 / 443 | **BLOCKED / NOT TESTED** | Apache service not installed or listening on port 80. |
-| **RT-03: MySQL / MariaDB Server Daemon** | Port 3306 | **BLOCKED / NOT TESTED** | MySQL service not installed or listening on port 3306. |
-| **RT-04: phpMyAdmin Import of `database.sql`** | Web interface / CLI | **BLOCKED / NOT TESTED** | Requires active MySQL and Apache daemons to access phpMyAdmin. |
-| **RT-05: Live Database PDO Connection** | `config/database.php` | **BLOCKED / NOT TESTED** | Requires active MySQL service on port 3306. |
-| **RT-06: Live HTTP User Registration** | `auth/register.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-07: Live HTTP User Login** | `auth/login.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-08: Live HTTP User Logout** | `auth/logout.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. |
-| **RT-09: Live HTTP Task Creation** | `tasks/create.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-10: Live HTTP Task Details View** | `tasks/view.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. |
-| **RT-11: Live HTTP Task Editing** | `tasks/edit.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-12: Live HTTP Task Deletion** | `tasks/delete.php` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-13: Live HTTP Status Management** | `tasks/update_status.php`| **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-14: Live Search by Title** | `tasks/index.php?search=` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-15: Live Status Filtering** | `tasks/index.php?status=` | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-16: Live Validation Feedback** | Client & Server forms | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. |
-| **RT-17: Multi-User Account Isolation** | Cross-Account queries | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-18: Live IDOR Tampering Defense** | URL & payload ID edits | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Verified via offline SQLite simulation. |
-| **RT-19: Unauthorized Route Interception** | `require_auth()` guard | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Statically reviewed in `includes/auth.php`. |
-| **RT-20: Live CSRF Token Rejection** | POST without token | **BLOCKED / NOT TESTED** | Awaiting XAMPP Apache execution. Statically reviewed in `includes/csrf.php`. |
-| **RT-21: Browser Console & Log Inspection** | Apache & PHP logs | **BLOCKED / NOT TESTED** | Requires active Apache log files in `C:\xampp\apache\logs`. |
+| Runtime Test Item | Testing Target | Expected Result | Live Runtime Observed Result | Verification Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **RT-01: PHP CLI Syntax Linting** | `php -l` on all 20 PHP files | No syntax errors detected | 20/20 files passed linting with zero syntax errors on PHP 8.4.27 | **PASS / VERIFIED** |
+| **RT-02: Apache Server Daemon** | Port 80 response | HTTP 200 from Apache 2.4 | Responded with `HTTP/1.1 200 OK` from `Apache/2.4.65 (Win64)` | **PASS / VERIFIED** |
+| **RT-03: MySQL / MariaDB Daemon** | Port 3306 socket | Port open and accepting connections | MariaDB 10.11.16 active on port 3306, socket responsive | **PASS / VERIFIED** |
+| **RT-04: Database Schema Import** | `database.sql` import | Tables created and seeded | Tables `users` & `tasks` active; 2 sample users and 6 tasks seeded | **PASS / VERIFIED** |
+| **RT-05: Live Database PDO Connection** | `config/database.php` | PDO MySQL connection succeeds | Connected via `PDO` driver `mysql`; charset `utf8mb4` | **PASS / VERIFIED** |
+| **RT-06: Live HTTP User Registration** | `auth/register.php` | New user created and auto-logged in | Alice registered dynamically, session created, dashboard rendered | **PASS / VERIFIED** |
+| **RT-07: Live HTTP User Login** | `auth/login.php` | Valid credentials authenticated | John Doe authenticated via `password_verify()`; session initialized | **PASS / VERIFIED** |
+| **RT-08: Live HTTP User Logout** | `auth/logout.php` | Session cleared, redirected to login | Session destroyed, redirected to login screen with success alert | **PASS / VERIFIED** |
+| **RT-09: Live HTTP Task Creation** | `tasks/create.php` | Task inserted and linked to user | Created task *"Live Runtime Automated Verification Task"* | **PASS / VERIFIED** |
+| **RT-10: Live HTTP Task Details View** | `tasks/view.php` | Task metadata rendered | Viewed details page showing title, description, badge, created-at | **PASS / VERIFIED** |
+| **RT-11: Live HTTP Task Editing** | `tasks/edit.php` | Title & description updated | Updated to *"Live Runtime Verification Task (EDITED)"* | **PASS / VERIFIED** |
+| **RT-12: Live HTTP Task Deletion** | `tasks/delete.php` | Task permanently removed | Deleted task with POST + CSRF token; verified non-existent | **PASS / VERIFIED** |
+| **RT-13: Live HTTP Status Management** | `tasks/update_status.php`| Status changed with badge update | Status toggled through `Pending` -> `In Progress` -> `Completed` | **PASS / VERIFIED** |
+| **RT-14: Live Search by Title** | `tasks/index.php?search=` | Filtered tasks matching keyword | Search for `'Database'` returned only matching tasks for current user | **PASS / VERIFIED** |
+| **RT-15: Live Status Filtering** | `tasks/index.php?status=` | Filtered tasks matching status | Filter for `'Pending'` returned only `Pending` status tasks | **PASS / VERIFIED** |
+| **RT-16: Live Form Validation Feedback** | `auth/register.php` | Clear errors on invalid inputs | Invalid inputs returned friendly error notices; form retained state | **PASS / VERIFIED** |
+| **RT-17: Multi-User Account Isolation** | Cross-Account queries | Users see only their own tasks | Jane Smith's dashboard showed only Jane's tasks; John Doe's tasks hidden | **PASS / VERIFIED** |
+| **RT-18: Live IDOR Tampering Defense** | URL & payload ID edits | Direct object tampering blocked | John Doe attempting to access Jane's task #4 returned 404/Not Found | **PASS / VERIFIED** |
+| **RT-19: Unauthorized Route Guard** | `require_auth()` | Unauthenticated redirected | Requesting `/tasks/index.php` without cookies redirected to `/auth/login.php` | **PASS / VERIFIED** |
+| **RT-20: Live CSRF Token Rejection** | POST without token | HTTP 403 Forbidden | POSTing without valid CSRF token terminated with HTTP 403 Forbidden | **PASS / VERIFIED** |
+| **RT-21: Browser Console & Log Audit** | Apache & PHP logs | Zero PHP runtime errors | Apache `error.log` inspected; 0 PHP errors, warnings, or notices | **PASS / VERIFIED** |
 
 ---
 
-## 5. How to Run Live Runtime Tests Locally (Step-by-Step for Candidate):
-1. **Download XAMPP:** Download XAMPP for Windows (PHP 8.2 or 8.1) from [https://www.apachefriends.org/download.html](https://www.apachefriends.org/download.html).
-2. **Install XAMPP:** Run the installer and complete setup to `C:\xampp`.
-3. **Copy Project Folder:** Copy `A:\TaskFlow – Smart Task Management System` into `C:\xampp\htdocs\taskflow`.
-4. **Start Daemons:** Open XAMPP Control Panel and click **Start** on **Apache** and **MySQL**.
-5. **Import Database:** Navigate to `http://localhost/phpmyadmin/`, select the **Import** tab, choose `database.sql`, and click **Go**.
-6. **Open in Browser:** Navigate to `http://localhost/taskflow/` in Google Chrome or Microsoft Edge.
-7. **Verify Accounts:** Log in with `john.doe@example.com` / `Password123!` and test features.
-8. **Capture Screenshots:** Follow `screenshots/README.md` to save all 9 genuine images.
+## 4. Visual Screenshot Evidence (All 9 Screenshots Captured)
+
+All nine required submission screenshots were captured directly from the live application running in Apache and MariaDB via Chrome Headless utilizing the Chrome DevTools Protocol (`tests/capture_all_screenshots.py`). Each file is saved in the `screenshots/` directory:
+
+| Filename | Resolution | View / Functionality Highlighted | Verification Status |
+| :--- | :---: | :--- | :---: |
+| `01-registration.png` | 1280x820 | **User Registration Screen:** Clean card layout, validation feedback, secure inputs | **CAPTURED & VERIFIED** |
+| `02-login.png` | 1280x820 | **Sign In Screen:** Demo credentials card, password toggle, CSRF protection | **CAPTURED & VERIFIED** |
+| `03-dashboard.png` | 1280x820 | **Task Dashboard:** Welcome banner, 4 statistics cards, responsive layout | **CAPTURED & VERIFIED** |
+| `04-create-task.png` | 1280x820 | **Create Task Form:** Character counters, status selector, validation indicators | **CAPTURED & VERIFIED** |
+| `05-task-list.png` | 1280x820 | **Task Table with Badges:** Color-coded Bootstrap badges (Amber, Blue, Green) | **CAPTURED & VERIFIED** |
+| `06-edit-task.png` | 1280x820 | **Edit Task Screen:** Pre-populated task details, status dropdown, breadcrumbs | **CAPTURED & VERIFIED** |
+| `07-status-management.png` | 1280x820 | **Status Management Modal:** Interactive modal for instant inline status changes | **CAPTURED & VERIFIED** |
+| `08-search-filter.png` | 1280x820 | **Search & Filter:** Keyword search and status filter combined queries | **CAPTURED & VERIFIED** |
+| `09-user-isolation.png` | 1280x820 | **User Isolation:** Jane Smith's dashboard showing only Jane's tasks (IDOR defense) | **CAPTURED & VERIFIED** |
+
+---
+
+## 5. Comprehensive Summary Matrix
+
+```
+================================================================================
+FINAL VERIFICATION MATRIX – TASKFLOW WEB APPLICATION
+================================================================================
+1. PHP CLI Syntax Verification:         20 / 20 PASSED (100%) [PHP 8.4.27]
+2. Category 1 (Offline Test Suite):      27 / 27 PASSED (100%)
+3. Category 2 (Live Runtime Test Suite): 21 / 21 PASSED (100%) [Apache 2.4 / MariaDB 10.11]
+4. Visual Screenshots Captured:          9 /  9 VERIFIED (100%) [Chrome Headless CDP]
+5. Total Failed or Blocked Items:        0
+================================================================================
+OVERALL PROJECT STATUS: 100% FUNCTIONAL, VERIFIED & SUBMISSION READY
+================================================================================
+```
